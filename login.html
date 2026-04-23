@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 AdNova</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- 自定义样式 -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563eb',
+            secondary: '#475569',
+            success: '#10b981',
+            warning: '#f59e0b',
+            error: '#ef4444',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50">
+  <!-- 加载覆盖层 -->
+  <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-5 rounded-lg shadow-lg flex items-center">
+      <span class="loading mr-3"></span>
+      <span data-i18n="loading">加载中...</span>
+    </div>
+  </div>
+
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <!-- 语言选择器 -->
+      <div class="text-right mb-4">
+        <select id="language-switcher" class="bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <option value="zh" data-i18n="chinese">简体中文</option>
+          <option value="en" data-i18n="english">English</option>
+          <option value="ms" data-i18n="malay">Bahasa Melayu</option>
+        </select>
+      </div>
+      
+      <!-- 登录卡片 -->
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="p-6 sm:p-8">
+          <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-900 mb-2" data-i18n="login_title">登录 AdNova</h1>
+            <p class="text-gray-600" data-i18n="login_subtitle">登录您的账号开始使用 AdNova</p>
+          </div>
+          
+          <form id="login-form" class="space-y-6">
+            <!-- 邮箱 -->
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="email">邮箱</label>
+              <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" data-i18n-placeholder="email" placeholder="请输入您的邮箱">
+              <div class="invalid-feedback hidden"></div>
+            </div>
+            
+            <!-- 密码 -->
+            <div>
+              <label for="password" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="password">密码</label>
+              <input type="password" id="password" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" data-i18n-placeholder="password" placeholder="请输入您的密码">
+              <div class="invalid-feedback hidden"></div>
+            </div>
+            
+            <!-- 记住我和忘记密码 -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <input type="checkbox" id="remember-me" name="remember-me" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                <label for="remember-me" class="ml-2 block text-sm text-gray-700" data-i18n="remember_me">记住我</label>
+              </div>
+              <a href="#" class="text-sm text-primary hover:text-primary-dark" data-i18n="forgot_password">忘记密码？</a>
+            </div>
+            
+            <!-- 登录按钮 -->
+            <div>
+              <button type="submit" class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-200" data-i18n="login">登录</button>
+            </div>
+          </form>
+        </div>
+        
+        <!-- 注册链接 -->
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+          <div class="text-center text-sm">
+            <span class="text-gray-600" data-i18n="no_account">还没有账号？</span>
+            <a href="register.html" class="text-primary font-medium hover:text-primary-dark ml-1" data-i18n="register">注册</a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 版权信息 -->
+      <div class="text-center mt-6 text-sm text-gray-500">
+        <p>&copy; 2025 AdNova. 保留所有权利。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 国际化脚本 -->
+  <script src="js/i18n.js"></script>
+  <!-- 主脚本 -->
+  <script src="js/main.js"></script>
+</body>
+</html>
