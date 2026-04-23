@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>专业版设置 - AdNova</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- 自定义样式 -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563eb',
+            secondary: '#475569',
+            success: '#10b981',
+            warning: '#f59e0b',
+            error: '#ef4444',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50">
+  <!-- 加载覆盖层 -->
+  <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-5 rounded-lg shadow-lg flex items-center">
+      <span class="loading mr-3"></span>
+      <span data-i18n="loading">加载中...</span>
+    </div>
+  </div>
+
+  <div class="flex h-screen overflow-hidden">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="sidebar-nav">
+        <li>
+          <a href="dashboard.html">
+            <i class="fa fa-dashboard"></i>
+            <span data-i18n="dashboard">仪表盘</span>
+          </a>
+        </li>
+        <li>
+          <a href="generate.html" data-require-auth="true">
+            <i class="fa fa-magic"></i>
+            <span data-i18n="generate">生成内容</span>
+          </a>
+        </li>
+        <li>
+          <a href="meta-connect.html" data-require-auth="true">
+            <i class="fa fa-plug"></i>
+            <span data-i18n="meta_connect">连接Meta</span>
+          </a>
+        </li>
+        <li>
+          <a href="publish.html" data-require-auth="true">
+            <i class="fa fa-paper-plane"></i>
+            <span data-i18n="publish">发布</span>
+          </a>
+        </li>
+        <li>
+          <a href="analytics.html" data-require-auth="true">
+            <i class="fa fa-bar-chart"></i>
+            <span data-i18n="analytics">数据分析</span>
+          </a>
+        </li>
+        <li>
+          <a href="pro-settings.html" class="active" data-require-auth="true">
+            <i class="fa fa-cog"></i>
+            <span data-i18n="pro_settings">专业版设置</span>
+          </a>
+        </li>
+      </div>
+      
+      <div class="sidebar-footer">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-700">demo@adnova.com</p>
+            <p class="text-xs text-gray-500" data-i18n="pro_plan">专业版</p>
+          </div>
+          <button class="btn btn-outline btn-sm btn-logout" data-i18n="logout">退出</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+      <div class="container mx-auto">
+        <!-- 顶部栏 -->
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900" data-i18n="pro_settings_title">专业版设置</h1>
+            <p class="text-gray-600">管理您的专业版功能设置</p>
+          </div>
+          
+          <!-- 语言选择器 -->
+          <div>
+            <select id="language-switcher" class="bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="zh" data-i18n="chinese">简体中文</option>
+              <option value="en" data-i18n="english">English</option>
+              <option value="ms" data-i18n="malay">Bahasa Melayu</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- 升级提示 -->
+        <div id="upgrade-prompt" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 mb-6 hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold mb-2" data-i18n="upgrade_to_pro">升级到专业版</h2>
+              <p class="mb-4" data-i18n="pro_features_description">解锁自动回复Bot、高级分析和更多专业功能</p>
+              <button class="btn bg-white text-blue-600 hover:bg-blue-50" data-i18n="view_plans">查看套餐</button>
+            </div>
+            <div class="hidden md:block">
+              <i class="fa fa-robot text-5xl"></i>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bot部署 -->
+        <div class="card mb-6 pro-feature">
+          <div class="card-header">
+            <h2 class="text-lg font-medium text-gray-900" data-i18n="bot_deployment">自动回复 Bot 部署</h2>
+          </div>
+          <div class="card-body">
+            <p class="text-gray-600 mb-6" data-i18n="bot_description">设置自动回复Bot，自动处理客户咨询，提高回复效率</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Bot设置 -->
+              <div>
+                <!-- 选择平台 -->
+                <div class="mb-4">
+                  <label for="bot-platform" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="select_platform">选择平台 <span class="text-red-500">*</span></label>
+                  <select id="bot-platform" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    <option value="messenger" data-i18n="messenger">Facebook Messenger</option>
+                    <option value="whatsapp" data-i18n="whatsapp">WhatsApp</option>
+                    <option value="instagram" data-i18n="instagram">Instagram DM</option>
+                  </select>
+                </div>
+                
+                <!-- Bot脚本 -->
+                <div class="mb-4">
+                  <label for="bot-script" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="bot_script">Bot 回复脚本 <span class="text-red-500">*</span></label>
+                  <textarea id="bot-script" rows="8" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required></textarea>
+                  <p class="text-xs text-gray-500 mt-1" data-i18n="bot_script_tip">您可以编写Bot的自动回复脚本，支持基本的问答逻辑</p>
+                </div>
+                
+                <!-- Bot状态 -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="bot_status">Bot 状态</label>
+                  <div class="flex items-center">
+                    <input type="checkbox" id="bot-status" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                    <label for="bot-status" class="ml-2 block text-sm text-gray-700" data-i18n="enable_bot">启用 Bot</label>
+                  </div>
+                </div>
+                
+                <!-- 部署按钮 -->
+                <button id="deploy-bot-btn" class="btn btn-primary">
+                  <i class="fa fa-robot mr-2"></i> <span data-i18n="deploy_bot">部署 Bot</span>
+                </button>
+              </div>
+              
+              <!-- Bot预览 -->
+              <div>
+                <h3 class="font-medium text-gray-900 mb-3" data-i18n="bot_preview">Bot 预览</h3>
+                <div class="bg-gray-50 rounded-lg p-4 h-80 overflow-y-auto" id="bot-preview">
+                  <div class="flex mb-4">
+                    <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2 flex-shrink-0">
+                      <i class="fa fa-user"></i>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
+                      <p class="text-sm">您好，我想了解一下产品价格</p>
+                    </div>
+                  </div>
+                  <div class="flex mb-4 justify-end">
+                    <div class="bg-primary text-white p-3 rounded-lg shadow-sm max-w-xs">
+                      <p class="text-sm" data-i18n="bot_example_response">您好！感谢您的咨询。我们的产品价格为RMXXX起，具体取决于您选择的配置。您需要了解哪款产品的详细价格呢？</p>
+                    </div>
+                    <div class="bg-gray-300 text-white rounded-full w-8 h-8 flex items-center justify-center ml-2 flex-shrink-0">
+                      <i class="fa fa-robot"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2" data-i18n="bot_preview_tip">部署后，Bot将自动回复客户的常见问题，提高客户服务效率</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 专业版功能 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- 高级分析 -->
+          <div class="card pro-feature">
+            <div class="card-body text-center p-6">
+              <div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa fa-line-chart text-2xl"></i>
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2" data-i18n="advanced_analytics">高级分析</h3>
+              <p class="text-gray-600 text-sm mb-4" data-i18n="advanced_analytics_description">获取更详细的广告表现数据和洞察</p>
+              <a href="#" class="text-primary hover:text-primary-dark text-sm" data-i18n="view_details">查看详情</a>
+            </div>
+          </div>
+          
+          <!-- 批量生成 -->
+          <div class="card pro-feature">
+            <div class="card-body text-center p-6">
+              <div class="bg-green-100 text-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa fa-files-o text-2xl"></i>
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2" data-i18n="batch_generation">批量生成</h3>
+              <p class="text-gray-600 text-sm mb-4" data-i18n="batch_generation_description">一次生成多个广告变体，提高效率</p>
+              <a href="#" class="text-primary hover:text-primary-dark text-sm" data-i18n="view_details">查看详情</a>
+            </div>
+          </div>
+          
+          <!-- A/B测试 -->
+          <div class="card pro-feature">
+            <div class="card-body text-center p-6">
+              <div class="bg-purple-100 text-purple-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa fa-flask text-2xl"></i>
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2" data-i18n="ab_testing">A/B 测试</h3>
+              <p class="text-gray-600 text-sm mb-4" data-i18n="ab_testing_description">自动进行广告A/B测试，优化广告效果</p>
+              <a href="#" class="text-primary hover:text-primary-dark text-sm" data-i18n="view_details">查看详情</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 国际化脚本 -->
+  <script src="js/i18n.js"></script>
+  <!-- 主脚本 -->
+  <script src="js/main.js"></script>
+</body>
+</html>
