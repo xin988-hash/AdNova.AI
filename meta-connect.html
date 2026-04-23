@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>连接Meta账号 - AdNova</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- 自定义样式 -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563eb',
+            secondary: '#475569',
+            success: '#10b981',
+            warning: '#f59e0b',
+            error: '#ef4444',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50">
+  <!-- 加载覆盖层 -->
+  <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-5 rounded-lg shadow-lg flex items-center">
+      <span class="loading mr-3"></span>
+      <span data-i18n="loading">加载中...</span>
+    </div>
+  </div>
+
+  <div class="flex h-screen overflow-hidden">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="sidebar-nav">
+        <li>
+          <a href="dashboard.html">
+            <i class="fa fa-dashboard"></i>
+            <span data-i18n="dashboard">仪表盘</span>
+          </a>
+        </li>
+        <li>
+          <a href="generate.html" data-require-auth="true">
+            <i class="fa fa-magic"></i>
+            <span data-i18n="generate">生成内容</span>
+          </a>
+        </li>
+        <li>
+          <a href="meta-connect.html" class="active" data-require-auth="true">
+            <i class="fa fa-plug"></i>
+            <span data-i18n="meta_connect">连接Meta</span>
+          </a>
+        </li>
+        <li>
+          <a href="publish.html" data-require-auth="true">
+            <i class="fa fa-paper-plane"></i>
+            <span data-i18n="publish">发布</span>
+          </a>
+        </li>
+        <li>
+          <a href="analytics.html" data-require-auth="true">
+            <i class="fa fa-bar-chart"></i>
+            <span data-i18n="analytics">数据分析</span>
+          </a>
+        </li>
+        <li>
+          <a href="pro-settings.html" data-require-auth="true">
+            <i class="fa fa-cog"></i>
+            <span data-i18n="pro_settings">专业版设置</span>
+          </a>
+        </li>
+      </div>
+      
+      <div class="sidebar-footer">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-700">demo@adnova.com</p>
+            <p class="text-xs text-gray-500" data-i18n="pro_plan">专业版</p>
+          </div>
+          <button class="btn btn-outline btn-sm btn-logout" data-i18n="logout">退出</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+      <div class="container mx-auto">
+        <!-- 顶部栏 -->
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900" data-i18n="meta_connect_title">连接 Meta 账号</h1>
+            <p class="text-gray-600">连接您的 Meta 账号以发布内容</p>
+          </div>
+          
+          <!-- 语言选择器 -->
+          <div>
+            <select id="language-switcher" class="bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="zh" data-i18n="chinese">简体中文</option>
+              <option value="en" data-i18n="english">English</option>
+              <option value="ms" data-i18n="malay">Bahasa Melayu</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- 连接状态卡片 -->
+        <div class="card mb-6">
+          <div class="card-body">
+            <div class="flex flex-col md:flex-row md:items-center justify-between">
+              <div>
+                <h2 class="text-lg font-medium text-gray-900 mb-2" data-i18n="connect_status">连接状态</h2>
+                <div id="connection-status" class="mb-4">
+                  <span class="badge badge-error" data-i18n="disconnected">未连接</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1" data-i18n="connected_account">已连接账号</p>
+                    <p id="connected-account" class="font-medium">-</p>
+                  </div>
+                  
+                  <div>
+                    <p class="text-sm text-gray-600 mb-1" data-i18n="available_platforms">可用平台</p>
+                    <div id="available-platforms">-</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mt-4 md:mt-0">
+                <button id="connect-meta-btn" class="btn btn-primary mr-2">
+                  <i class="fa fa-plug mr-2"></i> <span data-i18n="connect_meta">连接 Meta 账号</span>
+                </button>
+                <button id="disconnect-meta-btn" class="btn btn-outline hidden">
+                  <i class="fa fa-unplug mr-2"></i> <span data-i18n="disconnect_meta">断开连接</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 连接指引 -->
+        <div class="card mb-6">
+          <div class="card-header">
+            <h2 class="text-lg font-medium text-gray-900" data-i18n="connect_guide">连接指引</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <!-- 步骤1 -->
+              <div class="bg-gray-50 p-4 rounded-lg text-center">
+                <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3">1</div>
+                <h3 class="font-medium text-gray-900 mb-2" data-i18n="connect_step_1">点击下方按钮</h3>
+                <p class="text-sm text-gray-600">点击"连接 Meta 账号"按钮开始连接流程</p>
+              </div>
+              
+              <!-- 步骤2 -->
+              <div class="bg-gray-50 p-4 rounded-lg text-center">
+                <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3">2</div>
+                <h3 class="font-medium text-gray-900 mb-2" data-i18n="connect_step_2">登录您的 Meta 账号</h3>
+                <p class="text-sm text-gray-600">在弹出的窗口中登录您的 Meta 账号</p>
+              </div>
+              
+              <!-- 步骤3 -->
+              <div class="bg-gray-50 p-4 rounded-lg text-center">
+                <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3">3</div>
+                <h3 class="font-medium text-gray-900 mb-2" data-i18n="connect_step_3">授权 AdNova 访问权限</h3>
+                <p class="text-sm text-gray-600">授权 AdNova 访问您的 Meta 账号权限</p>
+              </div>
+              
+              <!-- 步骤4 -->
+              <div class="bg-gray-50 p-4 rounded-lg text-center">
+                <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3">4</div>
+                <h3 class="font-medium text-gray-900 mb-2" data-i18n="connect_step_4">完成连接</h3>
+                <p class="text-sm text-gray-600">连接成功后，您可以开始发布内容</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 权限说明 -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="text-lg font-medium text-gray-900" data-i18n="permissions">权限说明</h2>
+          </div>
+          <div class="card-body">
+            <p class="text-gray-600 mb-4">AdNova 需要以下权限才能正常工作：</p>
+            
+            <div class="space-y-3">
+              <div class="flex items-start">
+                <div class="bg-green-100 text-green-600 p-1 rounded mr-3 mt-1">
+                  <i class="fa fa-check"></i>
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-900">管理广告</h3>
+                  <p class="text-sm text-gray-600">创建、编辑和管理您的广告</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="bg-green-100 text-green-600 p-1 rounded mr-3 mt-1">
+                  <i class="fa fa-check"></i>
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-900">发布内容</h3>
+                  <p class="text-sm text-gray-600">发布帖子和视频到您的页面</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="bg-green-100 text-green-600 p-1 rounded mr-3 mt-1">
+                  <i class="fa fa-check"></i>
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-900">查看洞察</h3>
+                  <p class="text-sm text-gray-600">查看您的广告和内容表现数据</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="bg-green-100 text-green-600 p-1 rounded mr-3 mt-1">
+                  <i class="fa fa-check"></i>
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-900">管理消息</h3>
+                  <p class="text-sm text-gray-600">（专业版）管理和回复您的消息</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-6 bg-yellow-50 p-4 rounded-lg">
+              <div class="flex items-start">
+                <div class="bg-yellow-400 text-white p-1 rounded mr-3 mt-1">
+                  <i class="fa fa-info"></i>
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-900">安全说明</h3>
+                  <p class="text-sm text-gray-600">AdNova 不会存储您的 Meta 账号密码，所有授权均通过 Meta 官方 OAuth 流程完成。您可以随时在 Meta 账号设置中撤销 AdNova 的访问权限。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 国际化脚本 -->
+  <script src="js/i18n.js"></script>
+  <!-- 主脚本 -->
+  <script src="js/main.js"></script>
+</body>
+</html>
