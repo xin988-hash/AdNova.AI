@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生成内容 - AdNova</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- 自定义样式 -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563eb',
+            secondary: '#475569',
+            success: '#10b981',
+            warning: '#f59e0b',
+            error: '#ef4444',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50">
+  <!-- 加载覆盖层 -->
+  <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-5 rounded-lg shadow-lg flex items-center">
+      <span class="loading mr-3"></span>
+      <span data-i18n="loading">加载中...</span>
+    </div>
+  </div>
+
+  <div class="flex h-screen overflow-hidden">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="sidebar-nav">
+        <li>
+          <a href="dashboard.html">
+            <i class="fa fa-dashboard"></i>
+            <span data-i18n="dashboard">仪表盘</span>
+          </a>
+        </li>
+        <li>
+          <a href="generate.html" class="active" data-require-auth="true">
+            <i class="fa fa-magic"></i>
+            <span data-i18n="generate">生成内容</span>
+          </a>
+        </li>
+        <li>
+          <a href="meta-connect.html" data-require-auth="true">
+            <i class="fa fa-plug"></i>
+            <span data-i18n="meta_connect">连接Meta</span>
+          </a>
+        </li>
+        <li>
+          <a href="publish.html" data-require-auth="true">
+            <i class="fa fa-paper-plane"></i>
+            <span data-i18n="publish">发布</span>
+          </a>
+        </li>
+        <li>
+          <a href="analytics.html" data-require-auth="true">
+            <i class="fa fa-bar-chart"></i>
+            <span data-i18n="analytics">数据分析</span>
+          </a>
+        </li>
+        <li>
+          <a href="pro-settings.html" data-require-auth="true">
+            <i class="fa fa-cog"></i>
+            <span data-i18n="pro_settings">专业版设置</span>
+          </a>
+        </li>
+      </div>
+      
+      <div class="sidebar-footer">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-700">demo@adnova.com</p>
+            <p class="text-xs text-gray-500" data-i18n="pro_plan">专业版</p>
+          </div>
+          <button class="btn btn-outline btn-sm btn-logout" data-i18n="logout">退出</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+      <div class="container mx-auto">
+        <!-- 顶部栏 -->
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900" data-i18n="generate_content_title">生成营销内容</h1>
+            <p class="text-gray-600">填写业务资料，AI 将为您生成专业的广告内容</p>
+          </div>
+          
+          <!-- 语言选择器 -->
+          <div>
+            <select id="language-switcher" class="bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="zh" data-i18n="chinese">简体中文</option>
+              <option value="en" data-i18n="english">English</option>
+              <option value="ms" data-i18n="malay">Bahasa Melayu</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- 生成表单 -->
+        <div id="generate-form-container" class="card mb-6">
+          <div class="card-body">
+            <form id="generate-form">
+              <!-- 基础信息 -->
+              <div class="mb-8">
+                <h2 class="text-lg font-medium text-gray-900 mb-4" data-i18n="basic_info">基础信息</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <!-- 行业 -->
+                  <div>
+                    <label for="industry" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="industry">行业 <span class="text-red-500">*</span></label>
+                    <select id="industry" name="industry" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                      <option value="">请选择行业</option>
+                      <option value="beauty" data-i18n="industry_options.beauty">美容美发</option>
+                      <option value="food" data-i18n="industry_options.food">餐饮美食</option>
+                      <option value="retail" data-i18n="industry_options.retail">零售商店</option>
+                      <option value="education" data-i18n="industry_options.education">教育培训</option>
+                      <option value="fitness" data-i18n="industry_options.fitness">健身运动</option>
+                      <option value="property" data-i18n="industry_options.property">房产地产</option>
+                      <option value="service" data-i18n="industry_options.service">服务业</option>
+                      <option value="tech" data-i18n="industry_options.tech">科技数码</option>
+                      <option value="fashion" data-i18n="industry_options.fashion">时尚服饰</option>
+                      <option value="other" data-i18n="industry_options.other">其他</option>
+                    </select>
+                  </div>
+                  
+                  <!-- 产品/服务名称 -->
+                  <div>
+                    <label for="product_name" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="product_name">产品/服务名称 <span class="text-red-500">*</span></label>
+                    <input type="text" id="product_name" name="product_name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="例如：高级护肤套装" required>
+                  </div>
+                  
+                  <!-- 品牌名称 -->
+                  <div>
+                    <label for="brand_name" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="brand_name">品牌名称（可选）</label>
+                    <input type="text" id="brand_name" name="brand_name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="例如：BeautyGlow">
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 产品信息 -->
+              <div class="mb-8">
+                <h2 class="text-lg font-medium text-gray-900 mb-4" data-i18n="product_info">产品信息</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- 价格 -->
+                  <div>
+                    <label for="price" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="price">价格 <span class="text-red-500">*</span></label>
+                    <input type="text" id="price" name="price" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="例如：RM299" required>
+                  </div>
+                  
+                  <!-- 优惠内容 -->
+                  <div>
+                    <label for="offer" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="offer">优惠内容 <span class="text-red-500">*</span></label>
+                    <input type="text" id="offer" name="offer" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="例如：首单8折优惠" required>
+                  </div>
+                </div>
+                
+                <!-- 核心卖点 -->
+                <div class="mt-6">
+                  <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="selling_points">核心卖点 <span class="text-red-500">*</span></label>
+                  <div id="selling-points-container">
+                    <div class="selling-point mb-2">
+                      <div class="input-group">
+                        <input type="text" name="selling_points[]" class="form-control" placeholder="例如：天然成分" required>
+                        <div class="input-group-append">
+                          <button type="button" class="btn btn-outline" onclick="app.removeSellingPoint(this)">
+                            <i class="fa fa-times"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" id="add-selling-point" class="btn btn-outline mt-2">
+                    <i class="fa fa-plus"></i> <span data-i18n="add_point">添加卖点</span>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- 受众信息 -->
+              <div class="mb-8">
+                <h2 class="text-lg font-medium text-gray-900 mb-4" data-i18n="audience_info">受众信息</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <!-- 目标人群 -->
+                  <div>
+                    <label for="target_audience" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="target_audience">目标人群 <span class="text-red-500">*</span></label>
+                    <input type="text" id="target_audience" name="target_audience" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" data-i18n-placeholder="target_audience_placeholder" placeholder="例如：女性 25-40 岁" required>
+                  </div>
+                  
+                  <!-- 国家 -->
+                  <div>
+                    <label for="country" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="country">国家 <span class="text-red-500">*</span></label>
+                    <select id="country" name="country" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                      <option value="malaysia" data-i18n="malaysia">马来西亚</option>
+                    </select>
+                  </div>
+                  
+                  <!-- 州属 -->
+                  <div>
+                    <label for="state" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="state">州属 <span class="text-red-500">*</span></label>
+                    <select id="state" name="state" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                      <option value="">请选择州属</option>
+                      <option value="selangor" data-i18n="state_options.selangor">雪兰莪</option>
+                      <option value="kuala_lumpur" data-i18n="state_options.kuala_lumpur">吉隆坡</option>
+                      <option value="johor" data-i18n="state_options.johor">柔佛</option>
+                      <option value="penang" data-i18n="state_options.penang">槟城</option>
+                      <option value="perak" data-i18n="state_options.perak">霹雳</option>
+                      <option value="sabah" data-i18n="state_options.sabah">沙巴</option>
+                      <option value="sarawak" data-i18n="state_options.sarawak">砂拉越</option>
+                      <option value="melaka" data-i18n="state_options.melaka">马六甲</option>
+                      <option value="negeri_sembilan" data-i18n="state_options.negeri_sembilan">森美兰</option>
+                      <option value="pahang" data-i18n="state_options.pahang">彭亨</option>
+                      <option value="kedah" data-i18n="state_options.kedah">吉打</option>
+                      <option value="perlis" data-i18n="state_options.perlis">玻璃市</option>
+                      <option value="terengganu" data-i18n="state_options.terengganu">登嘉楼</option>
+                      <option value="kelantan" data-i18n="state_options.kelantan">吉兰丹</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <!-- 城市 -->
+                <div class="mt-6">
+                  <label for="city" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="city">城市（可选）</label>
+                  <input type="text" id="city" name="city" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="例如：Petaling Jaya">
+                </div>
+              </div>
+              
+              <!-- 投放信息 -->
+              <div class="mb-8">
+                <h2 class="text-lg font-medium text-gray-900 mb-4" data-i18n="publish_info">投放信息</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <!-- 发布类型 -->
+                  <div>
+                    <label for="publish_type" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="publish_type">发布类型 <span class="text-red-500">*</span></label>
+                    <select id="publish_type" name="publish_type" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                      <option value="ad" data-i18n="ad">广告</option>
+                      <option value="post" data-i18n="post">帖子</option>
+                      <option value="video" data-i18n="video">短视频</option>
+                    </select>
+                  </div>
+                  
+                  <!-- 营销目标 -->
+                  <div>
+                    <label for="marketing_goal" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="marketing_goal">营销目标 <span class="text-red-500">*</span></label>
+                    <select id="marketing_goal" name="marketing_goal" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                      <option value="message" data-i18n="message">私信</option>
+                      <option value="lead" data-i18n="lead">留资</option>
+                      <option value="appointment" data-i18n="appointment">预约</option>
+                      <option value="order" data-i18n="order">下单</option>
+                      <option value="store_visit" data-i18n="store_visit">到店</option>
+                    </select>
+                  </div>
+                  
+                  <!-- 平台 -->
+                  <div>
+                    <label for="platform" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="platform">平台 <span class="text-red-500">*</span></label>
+                    <select id="platform" name="platform" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                      <option value="facebook" data-i18n="facebook">Facebook</option>
+                      <option value="instagram" data-i18n="instagram">Instagram</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  <!-- 语气风格 -->
+                  <div>
+                    <label for="tone" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="tone">语气风格 <span class="text-red-500">*</span></label>
+                    <select id="tone" name="tone" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                      <option value="professional" data-i18n="professional">专业</option>
+                      <option value="promotional" data-i18n="promotional">促销</option>
+                      <option value="premium" data-i18n="premium">高端</option>
+                    </select>
+                  </div>
+                  
+                  <!-- 输出语言 -->
+                  <div>
+                    <label for="output_language" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="output_language">输出语言 <span class="text-red-500">*</span></label>
+                    <select id="output_language" name="output_language" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                      <option value="zh" data-i18n="chinese">简体中文</option>
+                      <option value="en" data-i18n="english">English</option>
+                      <option value="ms" data-i18n="malay">Bahasa Melayu</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 提交按钮 -->
+              <div class="flex justify-center">
+                <button type="submit" class="btn btn-primary btn-lg" data-i18n="generate_button">生成内容</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <!-- 生成结果 -->
+        <div id="generation-result" class="card hidden">
+          <div class="card-header flex justify-between items-center">
+            <h2 class="text-lg font-medium text-gray-900" data-i18n="generation_result">生成结果</h2>
+            <div>
+              <button class="btn btn-outline btn-sm mr-2" data-i18n="regenerate">重新生成</button>
+              <button id="publish-now-btn" class="btn btn-primary btn-sm" data-i18n="publish_now">立即发布</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- 广告模板 -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-8">
+              <!-- 广告标题 -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-medium text-gray-700" data-i18n="ad_title">广告标题</h3>
+                  <button class="btn btn-outline btn-sm btn-copy" data-copy-field="ad_title">
+                    <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                  </button>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200" data-field="ad_title">【限时8折】BeautyGlow高级护肤套装 - 7天重现年轻肌肤</div>
+              </div>
+              
+              <!-- 广告文案 -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-medium text-gray-700" data-i18n="ad_copy">广告文案</h3>
+                  <button class="btn btn-outline btn-sm btn-copy" data-copy-field="ad_copy">
+                    <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                  </button>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200 whitespace-pre-line" data-field="ad_copy">✨ 采用100%天然成分，无化学添加剂
+✅ 临床验证7天见效，让肌肤重现年轻光彩
+💰 限时优惠：首单仅需RM239（原价RM299）
+
+立即点击了解更多，开启您的美丽之旅！</div>
+              </div>
+              
+              <!-- CTA按钮文案 -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-medium text-gray-700" data-i18n="cta_button">CTA 按钮文案</h3>
+                  <button class="btn btn-outline btn-sm btn-copy" data-copy-field="cta_button">
+                    <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                  </button>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200" data-field="cta_button">立即购买</div>
+              </div>
+              
+              <!-- 短视频脚本 -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-medium text-gray-700" data-i18n="video_script">短视频脚本</h3>
+                  <div>
+                    <button class="btn btn-outline btn-sm btn-regenerate mr-2" data-regenerate-field="video_script">
+                      <i class="fa fa-refresh"></i>
+                    </button>
+                    <button class="btn btn-outline btn-sm btn-copy" data-copy-field="video_script">
+                      <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200 whitespace-pre-line" data-field="video_script">镜头1：展示产品包装（3秒）
+镜头2：特写产品质地和使用方法（5秒）
+镜头3：用户使用前后对比（7秒）
+镜头4：展示用户好评（5秒）
+镜头5：强调限时优惠（5秒）</div>
+              </div>
+            </div>
+            
+            <!-- 拍摄建议 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <!-- 图片建议 -->
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-medium text-gray-700" data-i18n="image_suggestions">图片建议</h3>
+                  <button class="btn btn-outline btn-sm btn-copy" data-copy-field="image_suggestions">
+                    <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                  </button>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200">
+                  <ul class="list-disc pl-5 space-y-2" data-field="image_suggestions">
+                    <li>产品包装的高质量图片</li>
+                    <li>产品使用前后的对比图</li>
+                    <li>产品质地和成分的特写图</li>
+                    <li>用户使用产品的场景图</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <!-- 视频建议 -->
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-medium text-gray-700" data-i18n="video_suggestions">视频建议</h3>
+                  <button class="btn btn-outline btn-sm btn-copy" data-copy-field="video_suggestions">
+                    <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                  </button>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200">
+                  <ul class="list-disc pl-5 space-y-2" data-field="video_suggestions">
+                    <li>产品开箱视频</li>
+                    <li>使用方法演示视频</li>
+                    <li>前后对比展示视频</li>
+                    <li>用户见证视频</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 拍摄建议 -->
+            <div class="mb-8">
+              <div class="flex justify-between items-center mb-2">
+                <h3 class="font-medium text-gray-700" data-i18n="shooting_tips">拍摄建议</h3>
+                <button class="btn btn-outline btn-sm btn-copy" data-copy-field="shooting_tips">
+                  <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                </button>
+              </div>
+              <div class="bg-white p-4 rounded border border-gray-200">
+                <ul class="list-disc pl-5 space-y-2" data-field="shooting_tips">
+                  <li>使用自然光拍摄，避免过度修图</li>
+                  <li>突出产品的质感和包装细节</li>
+                  <li>确保色彩还原度高，特别是产品本身的颜色</li>
+                  <li>可以加入一些简单的动画效果增强吸引力</li>
+                </ul>
+              </div>
+            </div>
+            
+            <!-- 投放建议 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- 适合投放的平台 -->
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-medium text-gray-700" data-i18n="suitable_platforms">适合投放的平台</h3>
+                  <button class="btn btn-outline btn-sm btn-copy" data-copy-field="suitable_platforms">
+                    <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                  </button>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200" data-field="suitable_platforms">Facebook, Instagram</div>
+              </div>
+              
+              <!-- 适合的人群 -->
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-medium text-gray-700" data-i18n="suitable_audience">适合的人群</h3>
+                  <button class="btn btn-outline btn-sm btn-copy" data-copy-field="suitable_audience">
+                    <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                  </button>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200" data-field="suitable_audience">25-40岁女性，对护肤品有较高要求，注重天然成分</div>
+              </div>
+              
+              <!-- 测试预算建议 -->
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-medium text-gray-700" data-i18n="budget_suggestion">测试预算建议</h3>
+                  <button class="btn btn-outline btn-sm btn-copy" data-copy-field="budget_suggestion">
+                    <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                  </button>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200" data-field="budget_suggestion">建议测试预算：RM30-RM50/天</div>
+              </div>
+              
+              <!-- 自动回复首句 -->
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h3 class="font-medium text-gray-700" data-i18n="auto_reply">自动回复首句</h3>
+                  <button class="btn btn-outline btn-sm btn-copy" data-copy-field="auto_reply">
+                    <i class="fa fa-copy"></i> <span data-i18n="copy">复制</span>
+                  </button>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200" data-field="auto_reply">感谢您对BeautyGlow的关注！请问您对我们的护肤套装有什么具体问题吗？</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 国际化脚本 -->
+  <script src="js/i18n.js"></script>
+  <!-- 主脚本 -->
+  <script src="js/main.js"></script>
+</body>
+</html>
