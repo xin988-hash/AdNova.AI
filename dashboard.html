@@ -1,365 +1,50 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>仪表盘 - AdNova</title>
-  <!-- Tailwind CSS -->
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - AdNova</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome -->
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-  <!-- 自定义样式 -->
   <link rel="stylesheet" href="styles.css">
-  <!-- Tailwind 配置 -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#2563eb',
-            secondary: '#475569',
-            success: '#10b981',
-            warning: '#f59e0b',
-            error: '#ef4444',
-          }
-        }
-      }
-    }
-  </script>
 </head>
-<body class="bg-gray-50">
-  <!-- 加载覆盖层 -->
-  <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white p-5 rounded-lg shadow-lg flex items-center">
-      <span class="loading mr-3"></span>
-      <span data-i18n="loading">加载中...</span>
+<body class="bg-slate-50">
+<div class="min-h-screen max-w-6xl mx-auto px-6 py-8">
+  <header class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div>
+      <h1 class="text-3xl font-bold" data-i18n="title">控制台</h1>
+      <p class="text-slate-600" data-i18n="subtitle">欢迎回来，查看你的广告进展</p>
     </div>
-  </div>
+    <div class="flex items-center gap-2">
+      <select id="language-switcher" class="border rounded-lg px-3 py-2 text-sm"><option value="zh">简体中文</option><option value="en">English</option><option value="ms">Bahasa Melayu</option></select>
+      <a href="index.html" class="btn btn-outline" data-i18n="home">首页</a>
+      <button id="logout" class="btn btn-outline" data-i18n="logout">退出</button>
+    </div>
+  </header>
 
-  <div class="flex h-screen overflow-hidden">
-    <!-- 侧边栏 -->
-    <aside class="sidebar">
-      <div class="sidebar-nav">
-        <li>
-          <a href="dashboard.html" class="active">
-            <i class="fa fa-dashboard"></i>
-            <span data-i18n="dashboard">仪表盘</span>
-          </a>
-        </li>
-        <li>
-          <a href="generate.html" data-require-auth="true">
-            <i class="fa fa-magic"></i>
-            <span data-i18n="generate">生成内容</span>
-          </a>
-        </li>
-        <li>
-          <a href="meta-connect.html" data-require-auth="true">
-            <i class="fa fa-plug"></i>
-            <span data-i18n="meta_connect">连接Meta</span>
-          </a>
-        </li>
-        <li>
-          <a href="publish.html" data-require-auth="true">
-            <i class="fa fa-paper-plane"></i>
-            <span data-i18n="publish">发布</span>
-          </a>
-        </li>
-        <li>
-          <a href="analytics.html" data-require-auth="true">
-            <i class="fa fa-bar-chart"></i>
-            <span data-i18n="analytics">数据分析</span>
-          </a>
-        </li>
-        <li>
-          <a href="pro-settings.html" data-require-auth="true">
-            <i class="fa fa-cog"></i>
-            <span data-i18n="pro_settings">专业版设置</span>
-          </a>
-        </li>
-      </div>
-      
-      <div class="sidebar-footer">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-700">demo@adnova.com</p>
-            <p class="text-xs text-gray-500" data-i18n="pro_plan">专业版</p>
-          </div>
-          <button class="btn btn-outline btn-sm btn-logout" data-i18n="logout">退出</button>
-        </div>
-      </div>
-    </aside>
+  <section class="card p-5 mb-6 flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <p class="text-sm text-slate-500" data-i18n="current_plan">当前套餐</p>
+      <p class="text-xl font-bold" id="plan-label">Free</p>
+    </div>
+    <a href="pro-settings.html#billing" class="btn btn-primary" data-i18n="upgrade">升级套餐</a>
+  </section>
 
-    <!-- 主内容区域 -->
-    <main class="main-content">
-      <div class="container mx-auto">
-        <!-- 顶部栏 -->
-        <div class="flex justify-between items-center mb-6">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900" data-i18n="welcome">欢迎回来</h1>
-            <p class="text-gray-600" data-i18n="overview">概览</p>
-          </div>
-          
-          <!-- 语言选择器 -->
-          <div>
-            <select id="language-switcher" class="bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-              <option value="zh" data-i18n="chinese">简体中文</option>
-              <option value="en" data-i18n="english">English</option>
-              <option value="ms" data-i18n="malay">Bahasa Melayu</option>
-            </select>
-          </div>
-        </div>
-        
-        <!-- 统计卡片 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
-          <!-- 生成次数 -->
-          <div class="data-card">
-            <div class="data-card-header">
-              <h3 class="data-card-title" data-i18n="generation_count">生成次数</h3>
-              <div class="data-card-icon bg-blue-100 text-blue-600">
-                <i class="fa fa-file-text-o"></i>
-              </div>
-            </div>
-            <div class="data-card-value" id="generation-count">0</div>
-            <div class="data-card-desc">过去30天</div>
-          </div>
-          
-          <!-- 发布次数 -->
-          <div class="data-card">
-            <div class="data-card-header">
-              <h3 class="data-card-title" data-i18n="publish_count">发布次数</h3>
-              <div class="data-card-icon bg-green-100 text-green-600">
-                <i class="fa fa-paper-plane"></i>
-              </div>
-            </div>
-            <div class="data-card-value" id="publish-count">0</div>
-            <div class="data-card-desc">过去30天</div>
-          </div>
-          
-          <!-- 点击数 -->
-          <div class="data-card">
-            <div class="data-card-header">
-              <h3 class="data-card-title" data-i18n="click_count">点击数</h3>
-              <div class="data-card-icon bg-purple-100 text-purple-600">
-                <i class="fa fa-mouse-pointer"></i>
-              </div>
-            </div>
-            <div class="data-card-value" id="click-count">0</div>
-            <div class="data-card-desc">过去30天</div>
-          </div>
-          
-          <!-- 私信数 -->
-          <div class="data-card">
-            <div class="data-card-header">
-              <h3 class="data-card-title" data-i18n="message_count">私信数</h3>
-              <div class="data-card-icon bg-yellow-100 text-yellow-600">
-                <i class="fa fa-comments-o"></i>
-              </div>
-            </div>
-            <div class="data-card-value" id="message-count">0</div>
-            <div class="data-card-desc">过去30天</div>
-          </div>
-          
-          <!-- 留资数 -->
-          <div class="data-card">
-            <div class="data-card-header">
-              <h3 class="data-card-title" data-i18n="lead_count">留资数</h3>
-              <div class="data-card-icon bg-red-100 text-red-600">
-                <i class="fa fa-user-plus"></i>
-              </div>
-            </div>
-            <div class="data-card-value" id="lead-count">0</div>
-            <div class="data-card-desc">过去30天</div>
-          </div>
-        </div>
-        
-        <!-- 图表和表格 -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- 图表 -->
-          <div class="lg:col-span-2">
-            <div class="card">
-              <div class="card-header flex justify-between items-center">
-                <h3 class="text-lg font-medium text-gray-900" data-i18n="performance_overview">表现概览</h3>
-                <div class="flex space-x-2">
-                  <button class="btn btn-sm btn-outline">7天</button>
-                  <button class="btn btn-sm btn-primary">30天</button>
-                  <button class="btn btn-sm btn-outline">90天</button>
-                </div>
-              </div>
-              <div class="card-body">
-                <div class="chart-container">
-                  <canvas id="performance-chart"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- 快速操作 -->
-          <div>
-            <div class="card">
-              <div class="card-header">
-                <h3 class="text-lg font-medium text-gray-900" data-i18n="quick_actions">快速操作</h3>
-              </div>
-              <div class="card-body">
-                <div class="space-y-4">
-                  <a href="generate.html" class="flex items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
-                    <div class="bg-blue-500 text-white p-2 rounded-md mr-3">
-                      <i class="fa fa-magic"></i>
-                    </div>
-                    <div>
-                      <h4 class="font-medium text-gray-900" data-i18n="generate_ad">生成广告</h4>
-                      <p class="text-sm text-gray-600">快速创建新的广告内容</p>
-                    </div>
-                  </a>
-                  
-                  <a href="meta-connect.html" class="flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition">
-                    <div class="bg-green-500 text-white p-2 rounded-md mr-3">
-                      <i class="fa fa-plug"></i>
-                    </div>
-                    <div>
-                      <h4 class="font-medium text-gray-900" data-i18n="connect_meta">连接 Meta 账号</h4>
-                      <p class="text-sm text-gray-600">连接您的社交媒体账号</p>
-                    </div>
-                  </a>
-                  
-                  <a href="publish.html" class="flex items-center p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition">
-                    <div class="bg-purple-500 text-white p-2 rounded-md mr-3">
-                      <i class="fa fa-paper-plane"></i>
-                    </div>
-                    <div>
-                      <h4 class="font-medium text-gray-900" data-i18n="publish_content">发布内容</h4>
-                      <p class="text-sm text-gray-600">发布您的广告或帖子</p>
-                    </div>
-                  </a>
-                  
-                  <a href="analytics.html" class="flex items-center p-3 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition">
-                    <div class="bg-yellow-500 text-white p-2 rounded-md mr-3">
-                      <i class="fa fa-bar-chart"></i>
-                    </div>
-                    <div>
-                      <h4 class="font-medium text-gray-900" data-i18n="view_analytics">查看数据分析</h4>
-                      <p class="text-sm text-gray-600">分析您的广告表现</p>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 最近活动 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          <!-- 最近生成记录 -->
-          <div class="card">
-            <div class="card-header flex justify-between items-center">
-              <h3 class="text-lg font-medium text-gray-900" data-i18n="recent_generations">最近生成记录</h3>
-              <a href="generate.html" class="text-primary hover:text-primary-dark text-sm" data-i18n="view_all">查看全部</a>
-            </div>
-            <div class="card-body p-0">
-              <div class="overflow-x-auto">
-                <table class="table w-full">
-                  <thead>
-                    <tr>
-                      <th data-i18n="product">产品</th>
-                      <th data-i18n="type">类型</th>
-                      <th data-i18n="date">日期</th>
-                    </tr>
-                  </thead>
-                  <tbody id="recent-generations">
-                    <tr>
-                      <td colspan="3" class="text-center py-4" data-i18n="no_data">暂无数据</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          
-          <!-- 最近发布记录 -->
-          <div class="card">
-            <div class="card-header flex justify-between items-center">
-              <h3 class="text-lg font-medium text-gray-900" data-i18n="recent_publishes">最近发布记录</h3>
-              <a href="publish.html" class="text-primary hover:text-primary-dark text-sm" data-i18n="view_all">查看全部</a>
-            </div>
-            <div class="card-body p-0">
-              <div class="overflow-x-auto">
-                <table class="table w-full">
-                  <thead>
-                    <tr>
-                      <th data-i18n="type">类型</th>
-                      <th data-i18n="platform">平台</th>
-                      <th data-i18n="status">状态</th>
-                      <th data-i18n="date">日期</th>
-                    </tr>
-                  </thead>
-                  <tbody id="recent-publishes">
-                    <tr>
-                      <td colspan="4" class="text-center py-4" data-i18n="no_data">暂无数据</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- 国际化脚本 -->
-  <!-- 主脚本 -->
-  <script>
-    // 初始化性能图表
-    document.addEventListener('DOMContentLoaded', function() {
-      if (typeof Chart !== 'undefined') {
-        const ctx = document.getElementById('performance-chart').getContext('2d');
-        
-        // 模拟数据
-        const dates = ['6/1', '6/2', '6/3', '6/4', '6/5', '6/6', '6/7', '6/8', '6/9', '6/10', '6/11', '6/12', '6/13', '6/14'];
-        const clicks = [12, 19, 15, 17, 22, 28, 32, 30, 25, 22, 18, 24, 29, 35];
-        const impressions = [120, 190, 150, 170, 220, 280, 320, 300, 250, 220, 180, 240, 290, 350];
-        
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: dates,
-            datasets: [
-              {
-                label: '点击量',
-                data: clicks,
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                tension: 0.4,
-                fill: true
-              },
-              {
-                label: '曝光量',
-                data: impressions,
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4,
-                fill: true
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: 'top',
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      }
-    });
-  </script>
-</body>
-</html>
+  <section class="grid md:grid-cols-3 gap-5">
+    <a href="generate.html" class="card p-6 hover:shadow-md"><h3 class="font-semibold" data-i18n="gen">生成广告内容</h3><p class="text-sm text-slate-600 mt-2" data-i18n="gen_desc">快速生成标题、文案、视频脚本</p></a>
+    <a href="publish.html" class="card p-6 hover:shadow-md"><h3 class="font-semibold" data-i18n="publish">发布广告</h3><p class="text-sm text-slate-600 mt-2" data-i18n="publish_desc">连接 Meta 后一键发布</p></a>
+    <a href="pro-settings.html" class="card p-6 hover:shadow-md"><h3 class="font-semibold" data-i18n="settings">设置中心</h3><p class="text-sm text-slate-600 mt-2" data-i18n="settings_desc">管理套餐、账单和高级功能</p></a>
+  </section>
+</div>
+<script>
+const i18n={zh:{title:'控制台',subtitle:'欢迎回来，查看你的广告进展',home:'首页',logout:'退出',current_plan:'当前套餐',upgrade:'升级套餐',gen:'生成广告内容',gen_desc:'快速生成标题、文案、视频脚本',publish:'发布广告',publish_desc:'连接 Meta 后一键发布',settings:'设置中心',settings_desc:'管理套餐、账单和高级功能'},en:{title:'Dashboard',subtitle:'Welcome back. Track your ad performance.',home:'Home',logout:'Logout',current_plan:'Current plan',upgrade:'Upgrade',gen:'Generate Ad Content',gen_desc:'Create headlines, copy, and video scripts instantly',publish:'Publish Ads',publish_desc:'Connect Meta and publish in one click',settings:'Settings',settings_desc:'Manage plans, billing, and advanced features'},ms:{title:'Papan Pemuka',subtitle:'Selamat kembali. Pantau prestasi iklan anda.',home:'Laman Utama',logout:'Log keluar',current_plan:'Pelan semasa',upgrade:'Naik taraf',gen:'Jana Kandungan Iklan',gen_desc:'Jana tajuk, salinan dan skrip video dengan cepat',publish:'Terbit Iklan',publish_desc:'Sambung Meta dan terbit satu klik',settings:'Tetapan',settings_desc:'Urus pelan, bil dan ciri lanjutan'}};
+const $=s=>document.querySelector(s);const langSel=$('#language-switcher');
+const email=localStorage.getItem('adnova_current_user');
+if(!email) window.location.href='login.html';
+const users=JSON.parse(localStorage.getItem('adnova_users')||'[]');
+const me=users.find(u=>u.email===email)||{plan:'free'};
+$('#plan-label').textContent=(me.plan||'free').toUpperCase();
+function lang(){return localStorage.getItem('adnova_lang')||'zh'};function t(k){return i18n[lang()][k]||k}
+function applyLang(){langSel.value=lang();document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));document.documentElement.lang=lang()==='zh'?'zh-CN':lang();}
+langSel.addEventListener('change',e=>{localStorage.setItem('adnova_lang',e.target.value);applyLang();});applyLang();
+$('#logout').addEventListener('click',()=>{localStorage.removeItem('adnova_current_user');window.location.href='login.html';});
+</script>
+</body></html>
