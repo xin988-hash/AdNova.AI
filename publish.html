@@ -1,260 +1,34 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>发布内容 - AdNova</title>
-  <!-- Tailwind CSS -->
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>发布 - AdNova</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome -->
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <!-- 自定义样式 -->
   <link rel="stylesheet" href="styles.css">
-  <!-- Tailwind 配置 -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#2563eb',
-            secondary: '#475569',
-            success: '#10b981',
-            warning: '#f59e0b',
-            error: '#ef4444',
-          }
-        }
-      }
-    }
-  </script>
 </head>
-<body class="bg-gray-50">
-  <!-- 加载覆盖层 -->
-  <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white p-5 rounded-lg shadow-lg flex items-center">
-      <span class="loading mr-3"></span>
-      <span data-i18n="loading">加载中...</span>
-    </div>
-  </div>
+<body class="bg-slate-50">
+<div class="min-h-screen max-w-5xl mx-auto px-6 py-8">
+  <header class="flex items-center justify-between mb-6">
+    <div><h1 class="text-3xl font-bold" data-i18n="title">发布广告</h1><p class="text-slate-600" data-i18n="subtitle">将生成内容发布到 Meta 账号</p></div>
+    <div class="flex items-center gap-2"><select id="language-switcher" class="border rounded-lg px-3 py-2 text-sm"><option value="zh">简体中文</option><option value="en">English</option><option value="ms">Bahasa Melayu</option></select><a href="dashboard.html" class="btn btn-outline" data-i18n="back">返回控制台</a></div>
+  </header>
 
-  <div class="flex h-screen overflow-hidden">
-    <!-- 侧边栏 -->
-    <aside class="sidebar">
-      <div class="sidebar-nav">
-        <li>
-          <a href="dashboard.html">
-            <i class="fa fa-dashboard"></i>
-            <span data-i18n="dashboard">仪表盘</span>
-          </a>
-        </li>
-        <li>
-          <a href="generate.html" data-require-auth="true">
-            <i class="fa fa-magic"></i>
-            <span data-i18n="generate">生成内容</span>
-          </a>
-        </li>
-        <li>
-          <a href="meta-connect.html" data-require-auth="true">
-            <i class="fa fa-plug"></i>
-            <span data-i18n="meta_connect">连接Meta</span>
-          </a>
-        </li>
-        <li>
-          <a href="publish.html" class="active" data-require-auth="true">
-            <i class="fa fa-paper-plane"></i>
-            <span data-i18n="publish">发布</span>
-          </a>
-        </li>
-        <li>
-          <a href="analytics.html" data-require-auth="true">
-            <i class="fa fa-bar-chart"></i>
-            <span data-i18n="analytics">数据分析</span>
-          </a>
-        </li>
-        <li>
-          <a href="pro-settings.html" data-require-auth="true">
-            <i class="fa fa-cog"></i>
-            <span data-i18n="pro_settings">专业版设置</span>
-          </a>
-        </li>
-      </div>
-      
-      <div class="sidebar-footer">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-700">demo@adnova.com</p>
-            <p class="text-xs text-gray-500" data-i18n="pro_plan">专业版</p>
-          </div>
-          <button class="btn btn-outline btn-sm btn-logout" data-i18n="logout">退出</button>
-        </div>
-      </div>
-    </aside>
+  <div id="limit-banner" class="hidden mb-4 rounded-lg border border-amber-200 bg-amber-50 text-amber-800 p-4"></div>
 
-    <!-- 主内容区域 -->
-    <main class="main-content">
-      <div class="container mx-auto">
-        <!-- 顶部栏 -->
-        <div class="flex justify-between items-center mb-6">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900" data-i18n="publish_title">发布内容</h1>
-            <p class="text-gray-600">选择要发布的内容并发布到您的社交媒体账号</p>
-          </div>
-          
-          <!-- 语言选择器 -->
-          <div>
-            <select id="language-switcher" class="bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-              <option value="zh" data-i18n="chinese">简体中文</option>
-              <option value="en" data-i18n="english">English</option>
-              <option value="ms" data-i18n="malay">Bahasa Melayu</option>
-            </select>
-          </div>
-        </div>
-        
-        <!-- 发布表单 -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- 左侧：发布设置 -->
-          <div class="lg:col-span-1">
-            <div class="card">
-              <div class="card-header">
-                <h2 class="text-lg font-medium text-gray-900" data-i18n="publish_settings">发布设置</h2>
-              </div>
-              <div class="card-body">
-                <!-- 选择内容 -->
-                <div class="mb-6">
-                  <label for="campaign-select" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="select_content">选择要发布的内容 <span class="text-red-500">*</span></label>
-                  <select id="campaign-select" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
-                    <option value="">请选择内容</option>
-                  </select>
-                </div>
-                
-                <!-- 选择平台 -->
-                <div class="mb-6">
-                  <label for="platform-select" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="select_platform">选择发布平台 <span class="text-red-500">*</span></label>
-                  <select id="platform-select" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
-                    <option value="">请先连接Meta账号</option>
-                  </select>
-                </div>
-                
-                <!-- 发布时间 -->
-                <div class="mb-6">
-                  <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="publish_time">发布时间</label>
-                  <div class="flex items-center">
-                    <input type="radio" id="publish-now" name="publish-time" value="now" class="h-4 w-4 text-primary focus:ring-primary border-gray-300" checked>
-                    <label for="publish-now" class="ml-2 block text-sm text-gray-700" data-i18n="publish_now">立即发布</label>
-                  </div>
-                  <div class="flex items-center mt-2">
-                    <input type="radio" id="publish-schedule" name="publish-time" value="schedule" class="h-4 w-4 text-primary focus:ring-primary border-gray-300">
-                    <label for="publish-schedule" class="ml-2 block text-sm text-gray-700" data-i18n="schedule_publish">定时发布</label>
-                  </div>
-                  <div id="schedule-time-container" class="mt-2 hidden">
-                    <input type="datetime-local" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                  </div>
-                </div>
-                
-                <!-- 发布按钮 -->
-                <button id="publish-btn" class="btn btn-primary btn-block">
-                  <i class="fa fa-paper-plane mr-2"></i> <span data-i18n="publish_now_button">立即发布</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- 右侧：预览 -->
-          <div class="lg:col-span-2">
-            <div class="card">
-              <div class="card-header">
-                <h2 class="text-lg font-medium text-gray-900" data-i18n="publish_preview">发布预览</h2>
-              </div>
-              <div class="card-body">
-                <div id="publish-preview" class="bg-gray-50 p-8 rounded-lg flex items-center justify-center">
-                  <div class="text-center">
-                    <i class="fa fa-file-text-o text-4xl text-gray-400 mb-3"></i>
-                    <p class="text-gray-600" data-i18n="select_content_first">请先选择要发布的内容</p>
-                  </div>
-                </div>
-                
-                <!-- 内容详情 -->
-                <div class="mt-6">
-                  <h3 class="font-medium text-gray-900 mb-3" data-i18n="content_details">内容详情</h3>
-                  <div class="bg-gray-50 p-4 rounded-lg">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <p class="text-sm text-gray-600 mb-1" data-i18n="publish_type">发布类型</p>
-                        <p id="detail-publish-type" class="font-medium">-</p>
-                      </div>
-                      
-                      <div>
-                        <p class="text-sm text-gray-600 mb-1" data-i18n="platform">平台</p>
-                        <p id="detail-platform" class="font-medium">-</p>
-                      </div>
-                      
-                      <div>
-                        <p class="text-sm text-gray-600 mb-1" data-i18n="target_audience">目标人群</p>
-                        <p id="detail-audience" class="font-medium">-</p>
-                      </div>
-                      
-                      <div>
-                        <p class="text-sm text-gray-600 mb-1" data-i18n="budget_suggestion">预算建议</p>
-                        <p id="detail-budget" class="font-medium">-</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 发布历史 -->
-        <div class="card mt-6">
-          <div class="card-header flex justify-between items-center">
-            <h2 class="text-lg font-medium text-gray-900" data-i18n="publish_history">发布历史</h2>
-            <a href="#" class="text-primary hover:text-primary-dark text-sm" data-i18n="view_all">查看全部</a>
-          </div>
-          <div class="card-body p-0">
-            <div class="overflow-x-auto">
-              <table class="table w-full">
-                <thead>
-                  <tr>
-                    <th data-i18n="content">内容</th>
-                    <th data-i18n="type">类型</th>
-                    <th data-i18n="platform">平台</th>
-                    <th data-i18n="status">状态</th>
-                    <th data-i18n="date">日期</th>
-                    <th data-i18n="actions">操作</th>
-                  </tr>
-                </thead>
-                <tbody id="publish-history">
-                  <tr>
-                    <td colspan="6" class="text-center py-4" data-i18n="no_data">暂无发布记录</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- 国际化脚本 -->
-  <!-- 主脚本 -->
-  <script>
-    // 定时发布切换
-    document.addEventListener('DOMContentLoaded', function() {
-      const nowRadio = document.getElementById('publish-now');
-      const scheduleRadio = document.getElementById('publish-schedule');
-      const scheduleContainer = document.getElementById('schedule-time-container');
-      
-      if (nowRadio && scheduleRadio && scheduleContainer) {
-        nowRadio.addEventListener('change', function() {
-          scheduleContainer.classList.add('hidden');
-        });
-        
-        scheduleRadio.addEventListener('change', function() {
-          scheduleContainer.classList.remove('hidden');
-        });
-      }
-    });
-  </script>
-</body>
-</html>
+  <section class="card p-6">
+    <label class="block text-sm font-medium mb-2" data-i18n="content">广告内容</label>
+    <textarea class="w-full border rounded-lg p-3" rows="6" data-i18n-placeholder="content_ph" placeholder="粘贴你要发布的文案"></textarea>
+    <button id="publish-btn" class="btn btn-primary mt-4" data-i18n="publish">立即发布</button>
+  </section>
+</div>
+<script>
+const i18n={zh:{title:'发布广告',subtitle:'将生成内容发布到 Meta 账号',back:'返回控制台',content:'广告内容',content_ph:'粘贴你要发布的文案',publish:'立即发布',limited:'此功能仅限 Pro 及以上用户',upgrade:'升级后可一键发布到 Meta。',publish_success:'发布成功（演示）'},en:{title:'Publish Ads',subtitle:'Send generated content to your Meta account',back:'Back to dashboard',content:'Ad Content',content_ph:'Paste the ad copy you want to publish',publish:'Publish now',limited:'This feature is available for Pro and above only',upgrade:'Upgrade to publish to Meta in one click.',publish_success:'Published successfully (demo)'},ms:{title:'Terbit Iklan',subtitle:'Terbit kandungan ke akaun Meta anda',back:'Kembali ke papan pemuka',content:'Kandungan Iklan',content_ph:'Tampal salinan iklan untuk diterbitkan',publish:'Terbit sekarang',limited:'Ciri ini hanya untuk pengguna Pro dan ke atas',upgrade:'Naik taraf untuk terbit ke Meta dengan satu klik.',publish_success:'Berjaya diterbitkan (demo)'}};
+const $=s=>document.querySelector(s);const langSel=$('#language-switcher');
+const email=localStorage.getItem('adnova_current_user');if(!email) window.location.href='login.html';
+const users=JSON.parse(localStorage.getItem('adnova_users')||'[]');const me=users.find(u=>u.email===email)||{plan:'free'};
+function lang(){return localStorage.getItem('adnova_lang')||'zh'};function t(k){return i18n[lang()][k]||k}
+function applyLang(){langSel.value=lang();document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.placeholder=t(el.dataset.i18nPlaceholder));document.documentElement.lang=lang()==='zh'?'zh-CN':lang();if(me.plan==='free'){$('#limit-banner').textContent=`${t('limited')} ${t('upgrade')}`;$('#limit-banner').classList.remove('hidden');}}
+langSel.addEventListener('change',e=>{localStorage.setItem('adnova_lang',e.target.value);applyLang();});applyLang();
+$('#publish-btn').addEventListener('click',()=>{if(me.plan==='free'){alert(t('limited'));window.location.href='pro-settings.html#billing';return;}alert(t('publish_success'));});
+</script>
+</body></html>
